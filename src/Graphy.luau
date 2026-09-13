@@ -39,13 +39,41 @@ local function remove<T>(t: { T }, idx: number?): T?
 	return removed
 end
 
+-- Escapes a string into double-quotes
+local function escapeStr(str: string)
+	local formatted = ""
+
+	for i = 1, #str do
+		local char = str:sub(i, i)
+
+		if char == "\n" then
+			formatted ..= "\\n"
+		elseif char == "\r" then
+			formatted ..= "\\r"
+		elseif char == "\t" then
+			formatted ..= "\\t"
+		elseif char == '"' then
+			formatted ..= '\\"'
+		elseif char >= 32 and char <= 126 then
+			formatted ..= char
+		else
+			formatted ..= "\\" .. char:byte(1, 1)
+		end
+	end
+
+	return '"' .. formatted .. '"'
+end
+
 local Graphy = {}
 
 export type Graph = typeof(Graphy.new())
 
 -- Creates a new graph object
-function Graphy.new<T>()
+function Graphy.new<T>(optionalGraphName: string?)
 	local self = {}
+
+	-- The name of the graph
+	self._graphName = optionalGraphName or "Unnamed graph"
 
 	-- The list of nodes in the graph
 	self._nodes = {} :: { T }
@@ -173,6 +201,7 @@ function Graphy.new<T>()
 	end
 
 	-- Returns a filtered version of the nodes
+	-- which passed the predicate
 	function self:filter(predicate: (T) -> boolean): { T? }
 		local passed = {}
 
@@ -188,6 +217,25 @@ function Graphy.new<T>()
 	-- Evaluates the indice to the node value
 	function self:evaluateIndice(id: number): T?
 		return self._nodes[id]
+	end
+
+	-- Converts the graph into the DOT format
+	function self:serializeToDot()
+		if #self._nodes == 0 then
+			return "digraph " .. self._graphName .. " {}"
+		end
+
+		local output = "digraph " .. self._graphName .. " {\n"
+
+		for _, node in ipairs(self:getNodeIndices()) do
+			output ..= escapeStr(tostring(node)) .. '[label="' .. escapeStr(tostring(self:evaluateIndice(node))) .. '"]\n'
+
+			for _, succ in ipairs(self:getSuccessorsOf(node)) do
+				output ..= escapeStr(tostring(node)) .. " -> " .. escapeStr(tostring(succ)) .. "\n"
+			end
+		end
+
+		return output .. "}"
 	end
 
 	return self

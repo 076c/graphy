@@ -204,11 +204,9 @@ function Algorithms.cheapestPathAStar(
 	local cameFrom = {}
 
 	local gScore = {}
-
-	gScore[start] = 0
-
 	local fScore = {}
 
+	gScore[start] = 0
 	fScore[start] = cost(start)
 
 	while #openSet > 0 do

@@ -1,7 +1,8 @@
 [package]
-name = "manFace0765/graphy"
+name = "076c/graphy"
 version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
+exclude = ["rojoSrc/*", "rokit.toml", "default.project.json", ".gitignore"]
 
 [dependencies]
