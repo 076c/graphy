@@ -128,6 +128,13 @@ function Graphy.new<T>()
 		end
 	end
 
+	-- Connects two nodes together and creates an outgoing connection
+	-- n1 is the 'predecessor' and n2 is the 'successor'
+	function self:addConnection(n1: number, n2: number)
+		self._preds[n2] = createAndInsert(self._preds[n2], n1)
+		self._succs[n1] = createAndInsert(self._succs[n1], n2)
+	end
+
 	-- Removes a node from the nodes list and returns
 	-- whether the node exists and the value
 	function self:removeNode(id: number): (boolean, T)
@@ -179,7 +186,7 @@ function Graphy.new<T>()
 	end
 
 	-- Evaluates the indice to the node value
-	function self:evaluateIndice(id: number)
+	function self:evaluateIndice(id: number): T?
 		return self._nodes[id]
 	end
 
