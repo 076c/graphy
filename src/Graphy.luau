@@ -91,6 +91,8 @@ function Graphy.new<T>(optionalGraphName: string?)
 	-- The list of predecessors for each node N
 	self._preds = {}
 
+	self._neighbors = {}
+
 	-- Changes the root of the graph to the first argument
 	function self:setRoot(root: number)
 		self._root = root
@@ -111,6 +113,7 @@ function Graphy.new<T>(optionalGraphName: string?)
 
 		self._preds[nodeIdx] = {}
 		self._succs[nodeIdx] = {}
+		self._neighbors[nodeIdx] = {}
 
 		-- Parent the node to the predecessor
 		if optionalPredecessor then
@@ -120,6 +123,7 @@ function Graphy.new<T>(optionalGraphName: string?)
 
 			self._preds[nodeIdx] = createAndInsert(self._preds[nodeIdx], optionalPredecessor)
 			self._succs[optionalPredecessor] = createAndInsert(self._succs[optionalPredecessor], nodeIdx)
+			self._neighbors[nodeIdx] = createAndInsert(self._neighbors[nodeIdx], optionalPredecessor)
 		end
 
 		return nodeIdx
@@ -188,6 +192,12 @@ function Graphy.new<T>(optionalGraphName: string?)
 	-- Returns the successors of a node
 	function self:getSuccessorsOf(id: number): { number? }
 		return self._succs[id] or {}
+	end
+
+	-- Returns every neighbor of a node regardless
+	-- of their direction
+	function self:getNeighborsOf(id: number): { number? }
+		return self._neigbors[id] or {}
 	end
 
 	-- Returns every node

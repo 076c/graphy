@@ -196,7 +196,7 @@ function Algorithms.cheapestPathAStar(
 	graph: Graphy.Graph,
 	start: number,
 	goal: number,
-	cost: (number) -> number,
+	heuristic: (number) -> number,
 	weight: (number, number) -> number
 ): (boolean, { number }?)
 	local inOpenSet = { [start] = true } :: { [number]: boolean }
@@ -207,7 +207,7 @@ function Algorithms.cheapestPathAStar(
 	local fScore = {}
 
 	gScore[start] = 0
-	fScore[start] = cost(start)
+	fScore[start] = heuristic(start)
 
 	while #openSet > 0 do
 		local current
@@ -238,7 +238,7 @@ function Algorithms.cheapestPathAStar(
 				cameFrom[neighbor] = current
 
 				gScore[neighbor] = tentativeGScore
-				fScore[neighbor] = tentativeGScore + cost(neighbor)
+				fScore[neighbor] = tentativeGScore + heuristic(neighbor)
 
 				if not inOpenSet[neighbor] then
 					openSet[#openSet + 1] = neighbor
@@ -249,6 +249,12 @@ function Algorithms.cheapestPathAStar(
 	end
 
 	return false, nil
+end
+
+-- Returns every node sorted by what has to be executed first
+-- "Topological Sort" (https://en.wikipedia.org/wiki/Topological_sorting)
+function Algorithms.topologicalSort(graph: Graphy.Graph)
+	return Algorithms.reversePostOrder(graph)
 end
 
 return Algorithms
