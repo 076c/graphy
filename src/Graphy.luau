@@ -224,6 +224,28 @@ function Graphy.new<T>(optionalGraphName: string?)
 		return passed
 	end
 
+	-- Removes every node which is not reachable
+	-- Rule: n where preds(n) <= 0 & succs(n) <= 0 or no connections
+	function self:removeUnreachableNodes()
+		local entries: { [number]: boolean } = {}
+
+		local function search(n)
+			entries[n] = true
+
+			for _, succ in ipairs(self:getSuccessorsOf(n)) do
+				search(succ)
+			end
+		end
+
+		search(self:getRoot())
+
+		for _, node in ipairs(self:getNodes()) do
+			if not entries[node] then
+				self:removeNode(node)
+			end
+		end
+	end
+
 	-- Evaluates the indice to the node value
 	function self:evaluateIndice(id: number): T?
 		return self._nodes[id]
